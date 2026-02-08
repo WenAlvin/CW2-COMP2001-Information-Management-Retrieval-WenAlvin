@@ -1,48 +1,30 @@
-from datetime import datetime
-from flask import abort
+from flask import make_response, abort
 
+from config import db
+from models import Trail, User, Location, trail_schema, trails_schema, LocationSchema
 
-def get_timestamp():
-    return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
-
-TRAILS = {
-    "Plymouth Circular": {
-        "name": "Plymouth Circular",
-        "Description": "A challenging trail with stunning mountain views.",
-        "Length": "5 km",
-        "ElevationGain": "500 m",
-        "Difficulty": "Hard",
-        "Route Type": "Loop",
-        "Estimated Time": "3 hours",
-        "Features": "Waterfalls, Rocky terrain, Scenic overlooks",
-        "CreatedDate": get_timestamp()
-},
-    "HK Circular": {
-        "name": "HK Trail",
-        "Description": "A scenic trail that takes you through lush forests and along a beautiful coastline.",
-        "Length": "2 km",
-        "ElevationGain": "200 m",
-        "Difficulty": "Easy",
-        "Route Type": "Linear",
-        "Estimated Time": "2 hours",
-        "Features": "Waterfalls, Rocky terrain, Scenic overlooks",
-        "CreatedDate": get_timestamp()
-    }
-}
 def read_all():
-    return list(TRAILS.values())
+    trails = Trail.query.all()
+    return trails_schema.dump(trails)
 def create(trail):
-    if "name" not in trail:
-        TRAILS[trail["name"]] = trail
-        trail["CreatedDate"] = get_timestamp()
-        return trail, 201
+    Name=trail.get("Name")
+    existing_trail = Trail.query.filter(Trail.Name == Name).one_or_none()
+    if existing_trail is None:
+        new_trail = Trail(
+            Name=Name,
+            Description=trail.get("Description"),
+            OwnerID=trail.get("OwnerID")
+        )
+    Description=trail.get("Description")
+    Locations=trail.get("Locations", [])
+    if not Name or not OwnerID:
+        abort(400, "Trail must have a name and owner ID")
+def read_one(name):
+    trail = Trail.query.filter(Trail.Name == name).one_or_none()
+    if trail is not None:
+        return trail_schema.dump(trail)
     else:
-        abort(400, f"Trail with name {trail['name']} already exists")
-def read_one(trail_id):
-    if trail_id in TRAILS:
-        return TRAILS[trail_id]
-    else:
-        abort(404, f"Trail with id {trail_id} not found")
+        abort(404, f"Trail with name {name} not found")
 def update(trail_id, trail):
     if trail_id in TRAILS:
         trail["id"] = trail_id
