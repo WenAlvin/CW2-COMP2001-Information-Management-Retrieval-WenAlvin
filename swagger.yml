@@ -1,130 +1,39 @@
 openapi: 3.0.0
 info:
-  title: TrailService API
-  version: 1.0
-  description: CRUD for Trails
-paths:
-  /trails:
-    get:
-      summary: Get all trails (limited view)
-      operationId: get_trails
-      responses:
-        '200':
-          description: List of trails
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id: {type: integer}
-                    name: {type: string}
-        '401': {description: Unauthorized}
-    post:
-      summary: Create a new trail (admin/owner only)
-      operationId: create_trail
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { $ref: '#/components/schemas/Trail' }
-      responses:
-        '200':
-          description: Trail created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id: {type: integer}
-                  message: {type: string}
-        '400': {description: Invalid data}
-        '401': {description: Unauthorized}
-        '500': {description: Server error}
-  /trails/{trail_id}:
-    get:
-      summary: Get a trail (full or limited based on auth)
-      operationId: get_trail
-      parameters:
-        - name: trail_id
-          in: path
-          required: true
-          schema: {type: integer}
-      responses:
-        '200':
-          description: Trail details
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id: {type: integer}
-                  name: {type: string}
-                  description: {type: string}
-        '401': {description: Unauthorized}
-        '404': {description: Trail not found}
-    put:
-      summary: Update a trail (admin/owner only)
-      operationId: update_trail
-      parameters:
-        - name: trail_id
-          in: path
-          required: true
-          schema: {type: integer}
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { $ref: '#/components/schemas/Trail' }
-      responses:
-        '200':
-          description: Trail updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message: {type: string}
-        '400': {description: Invalid data}
-        '401': {description: Unauthorized}
-        '403': {description: Forbidden}
-        '500': {description: Server error}
-    delete:
-      summary: Delete a trail (admin/owner only)
-      operationId: delete_trail
-      parameters:
-        - name: trail_id
-          in: path
-          required: true
-          schema: {type: integer}
-      responses:
-        '200':
-          description: Trail deleted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message: {type: string}
-        '401': {description: Unauthorized}
-        '403': {description: Forbidden}
-        '500': {description: Server error}
+  title: "TrailService API"
+  version: "1.0"
+  description: "CRUD for Trails"
+servers:
+  - url: "/api"
 components:
   schemas:
     Trail:
-      type: object
-      required: [name]
+      type: "object"
+      required:
+        - trail_id
       properties:
-        name: {type: string, minLength: 1, maxLength: 255}
-        description: {type: string}
-        locations:
-          type: array
-          items: { $ref: '#/components/schemas/Location' }
-    Location:
-      type: object
-      required: [latitude, longitude, sequence_order]
-      properties:
-        latitude: {type: number}
-        longitude: {type: number}
-        sequence_order: {type: integer, minimum: 1}
+        name:
+          type: "string"
+        description:
+          type: "string"
+        difficulty:
+          type: "string"
+        length:
+          type: "number"
+        estimated_time:
+          type: "string"
+        features:
+          type: "string"
+        created_date:
+          type: "string"
+        owner_id:
+          type: "integer"
+paths:
+  /trails:
+    get:
+      summary: "Get all trails (limited view)"
+      operationId: "trails.read_all"
+      responses:
+        "200":
+          description: "List of trails"
+       
