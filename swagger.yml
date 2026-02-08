@@ -10,7 +10,7 @@ components:
     Trail:
       type: "object"
       required:
-        - trail_id
+        - name
       properties:
         name:
           type: "string"
@@ -26,7 +26,18 @@ components:
           type: "string"
         created_date:
           type: "string"
-        owner_id:
+    Location:
+      type: "object"
+      required:
+        - latitude
+        - longitude
+        - sequence_order
+      properties:
+        latitude:
+          type: "number"
+        longitude:
+          type: "number"
+        sequence_order:
           type: "integer"
 paths:
   /trails:
@@ -36,4 +47,69 @@ paths:
       responses:
         "200":
           description: "List of trails"
-       
+    post:
+      summary: "Create a new trail"
+      operationId: "trails.create"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Trail"
+      responses:
+        "201":
+          description: "Trail created successfully"
+        "400":
+          description: "Invalid input"
+  /trails/{trail_id}:
+    get: 
+      summary: "Get trail by name (detailed view)"
+      operationId: "trails.read_one"
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Trail details"
+        "404":
+          description: "Trail not found"
+
+    put:
+      summary: "Update an existing trail"
+      operationId: "trails.update"
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Trail"
+      responses:
+        "200":
+          description: "Trail updated successfully"
+        "400":
+          description: "Invalid input"
+        "404":
+          description: "Trail not found"
+    delete:
+      summary: "Delete a trail by ID"
+      operationId: "trails.delete"
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "204":
+          description: "Trail deleted successfully"
+        "404":
+          description: "Trail not found"
