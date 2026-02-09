@@ -6,7 +6,12 @@
 </head>
 <body>
 <h1>
-Hello, World!
+Hello, Trail-lovers!
 </h1>
+<ul>
+{% for trail in trails %}
+<li>{{ trail.Name }}</li>
+{% endfor %}
+</ul>
 </body>
 </html>
