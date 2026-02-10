@@ -61,7 +61,7 @@ paths:
           description: "Trail created successfully"
         "400":
           description: "Invalid input"
-  /trails/{trail_name}:
+  /trails/{name}:
     get: 
       summary: "Get trail by name"
       operationId: "trails.read_one"

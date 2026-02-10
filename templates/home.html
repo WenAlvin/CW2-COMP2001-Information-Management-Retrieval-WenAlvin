@@ -5,13 +5,18 @@
 <title>RP Flask REST API</title>
 </head>
 <body>
-<h1>
-Hello, Trail-lovers!
-</h1>
-<ul>
-{% for trail in trails %}
-<li>{{ trail.Name }}</li>
-{% endfor %}
-</ul>
+    <h1>
+    Hello, Trail-lovers!
+    </h1>
+    {% for trail in trails %}
+    <h2>{{ trail.Name }}</h2>
+    <ul>
+        {% for location in trail.locations %}
+        <li> 
+            Latitude:{{ location.Latitude }}, Longitude:{{ location.Longitude }}, Sequence Order:{{ location.SequenceOrder }}
+        </li>
+        {% endfor %}    
+    </ul>
+    {% endfor %}
 </body>
 </html>
