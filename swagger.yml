@@ -40,6 +40,31 @@ components:
         sequence_order:
           type: "integer"
 paths:
+  /auth/login:
+    post:
+      summary: Authenticate user and get token
+      operationId: trails.login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: {type: string, format: email}
+                password: {type: string, minLength: 6}
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: {type: string}  # Local JWT token
+        '400': {description: Invalid credentials}
+        '401': {description: Authentication failed}
   /trails:
     get:
       summary: "Get all trails "

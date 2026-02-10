@@ -9,7 +9,7 @@ class User(db.Model):
     UserID = db.Column(db.Integer, primary_key=True)
     Email = db.Column(db.String(255), unique=True, nullable=False)
     UserName = db.Column(db.String(100), nullable=False)
-    Password = db.Column(db.String(255), nullable=False)
+    Role = db.Column(db.String(50), nullable=False)
 
 class Location(db.Model):
     __tablename__ = 'Locations'
