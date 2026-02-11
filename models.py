@@ -51,7 +51,9 @@ class TrailSchema(ma.SQLAlchemyAutoSchema):
         sql_session = db.session
         include_fk = True
         include_relationships = True
+
     locations = fields.Nested(LocationSchema, many=True)
+
     
 
 trail_schema = TrailSchema()

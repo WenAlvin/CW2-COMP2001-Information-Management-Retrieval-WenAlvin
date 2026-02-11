@@ -31,3 +31,4 @@ urllib3
 Werkzeug
 pytz
 PyJWT
+connexion[uvicorn]

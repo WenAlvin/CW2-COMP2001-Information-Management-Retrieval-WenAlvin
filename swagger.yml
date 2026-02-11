@@ -10,35 +10,51 @@ components:
     Trail:
       type: "object"
       required:
-        - name
+        - Name
       properties:
-        name:
+        Name:
           type: "string"
-        description:
+        Description:
           type: "string"
-        difficulty:
+        Difficulty:
           type: "string"
-        length:
+        Length:
           type: "number"
-        estimated_time:
+        EstimatedTime:
+          type: "number"
+        Features:
           type: "string"
-        features:
-          type: "string"
-        created_date:
-          type: "string"
+        OwnerID:
+          type: "integer"
     Location:
       type: "object"
       required:
-        - latitude
-        - longitude
-        - sequence_order
+        - TrailID
+        - Latitude
+        - Longitude
+        - SequenceOrder
       properties:
-        latitude:
-          type: "number"
-        longitude:
-          type: "number"
-        sequence_order:
+        TrailID:
           type: "integer"
+        Latitude:
+          type: "number"
+        Longitude:
+          type: "number"
+        SequenceOrder:
+          type: "integer"
+  parameters:
+    TrailName:
+      name: "name"
+      in: "path"
+      required: true
+      schema:
+        type: "string"
+    LocationID:
+      name: "location_id"
+      in: "path"
+      required: true
+      schema:
+        type: "integer"
 paths:
   /auth/login:
     post:
@@ -67,12 +83,16 @@ paths:
         '401': {description: Authentication failed}
   /trails:
     get:
+      tags:
+      - "trails"
       summary: "Get all trails "
       operationId: "trails.read_all"
       responses:
         "200":
           description: "List of trails"
     post:
+      tags:
+      - "trails"
       summary: "Create a new trail"
       operationId: "trails.create"
       requestBody:
@@ -88,14 +108,12 @@ paths:
           description: "Invalid input"
   /trails/{name}:
     get: 
+      tags:
+      - "trails"
       summary: "Get trail by name"
       operationId: "trails.read_one"
       parameters:
-        - name: "name"
-          in: "path"
-          required: true
-          schema:
-            type: "string"
+        - $ref: "#/components/parameters/TrailName"
       responses:
         "200":
           description: "Trail details"
@@ -103,14 +121,12 @@ paths:
           description: "Trail not found"
 
     put:
+      tags:
+        - "trails"
       summary: "Update an existing trail"
       operationId: "trails.update"
       parameters:
-        - name: "name"
-          in: "path"
-          required: true
-          schema:
-            type: "string"
+        - $ref: "#/components/parameters/TrailName"
       requestBody:
         required: true
         content:
@@ -125,16 +141,82 @@ paths:
         "404":
           description: "Trail not found"
     delete:
+      tags:
+        - "trails"
       summary: "Delete a trail by name"
       operationId: "trails.delete"
       parameters:
-        - name: "name"
-          in: "path"
-          required: true
-          schema:
-            type: "string"
+        - $ref: "#/components/parameters/TrailName"
       responses:
         "204":
           description: "Trail deleted successfully"
         "404":
           description: "Trail not found"
+
+  /locations:
+    post:
+      tags:
+        - "locations"
+      summary: "Create a new location for a trail"
+      operationId: "locations.create"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Location"
+   
+      responses:
+        "201":
+          description: "Location created successfully"
+        "400":
+          description: "Invalid input"
+        "404":
+          description: "Trail not found"
+
+  /locations/{location_id}:
+    get:
+      tags:
+        - "locations"
+      summary: "Get location by ID"
+      operationId: "locations.read_one"
+      parameters:
+        - $ref: "#/components/parameters/LocationID"
+      responses:
+        "200":
+          description: "Location details"
+        "404":
+          description: "Location not found"
+  
+    put:
+      tags:
+        - "locations"
+      summary: "Update an existing location"
+      operationId: "locations.update"
+      parameters:
+        - $ref: "#/components/parameters/LocationID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Location"
+      responses:
+        "200":
+          description: "Location updated successfully"
+        "400":
+          description: "Invalid input"
+        "404":
+          description: "Location not found"
+    delete:
+      tags:
+        - "locations"
+      summary: "Delete a location by ID"
+      operationId: "locations.delete"
+      parameters:
+        - $ref: "#/components/parameters/LocationID"
+      responses:
+        "204":
+          description: "Location deleted successfully"
+        "404":
+          description: "Location not found"

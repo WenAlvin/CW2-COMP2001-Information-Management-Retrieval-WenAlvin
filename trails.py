@@ -1,7 +1,8 @@
 from flask import make_response, abort, request, jsonify
+from jsonschema import ValidationError
 
 from config import db
-from models import Trail, User, Location, trail_schema, trails_schema, LocationSchema
+from models import Trail, User,  trail_schema, trails_schema
 import jwt
 import requests
 from datetime import datetime, timedelta, timezone
@@ -58,13 +59,16 @@ def login(body):
 def read_all():
     trails = Trail.query.all()
     return trails_schema.dump(trails)
-def create(trail):
+def create(body):
     email = validate_auth()
-    name=trail.get("name")
+    name=body.get("Name")
     existing_trail = Trail.query.filter(Trail.Name == name).one_or_none()
     if existing_trail is None:
-        new_trail = trail_schema.load(trail, session=db.session)
-        new_trail.OwnerID = User.query.filter(User.Email == email).one_or_none().UserID
+        new_trail = trail_schema.load(body, session=db.session)
+        owner = User.query.filter(User.Email == email).one_or_none()
+        if owner is None:
+            abort(401, "User not found")
+        new_trail.OwnerID = owner.UserID
         db.session.add(new_trail)
         db.session.commit()
         return trail_schema.dump(new_trail), 201
@@ -76,8 +80,8 @@ def read_one(name):
         return trail_schema.dump(trail)
     else:
         abort(404, f"Trail with name {name} not found")
-def update(trail_Name, trail):
-    existing_trail = Trail.query.filter(Trail.Name == trail_Name).one_or_none()
+def update(name, trail):
+    existing_trail = Trail.query.filter(Trail.Name == name).one_or_none()
     if existing_trail:
         update_trail = trail_schema.load(trail, session=db.session)
         existing_trail.Description = update_trail.Description
@@ -90,7 +94,7 @@ def update(trail_Name, trail):
         db.session.commit()
         return trail_schema.dump(existing_trail), 201
     else:
-        abort(404, f"Trail with name {trail_Name} not found")
+        abort(404, f"Trail with name {name} not found")
 def delete(name):
     
     existing_trail = Trail.query.filter(Trail.Name == name).one_or_none()
